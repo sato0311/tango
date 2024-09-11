@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>単語帳3</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>単語帳</h1>
+        <button id="fileSelectButton">ファイル選択画面へ</button>
+    </div>
+
+    <p id="fileName"> ファイル３</p>
+    <input type="text" id="word" placeholder="単語">
+    <input type="text" id="meaning" placeholder="意味">
+    <button onclick="addWord()">追加</button>
+    <button onclick="toggleDeleteMode()">削除</button>
+    <button id="deleteSelectedBtn" onclick="deleteSelected()" style="display:none;">選択した単語を削除</button> 
+    <table id="wordTable">
+        <thead>
+            <tr>
+                <th></th>
+                <th class="delete-checkbox" style="display:none;">選択</th>
+                <th>単語</th>
+                <th>意味</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        let wordDict = JSON.parse(localStorage.getItem('wordDict3')) || {};
+        let deleteMode = false;
+
+        document.getElementById('fileSelectButton').addEventListener('click', function() {
+            // ファイル選択画面にリダイレクト
+            window.location.href = 'fileSelection.html'; // 必要に応じてパスを修正
+        });
+
+        function addWord() {
+            const word = document.getElementById('word').value.trim();
+            const meaning = document.getElementById('meaning').value.trim();
+            if (word && meaning) {
+                wordDict[word] = meaning;
+                localStorage.setItem('wordDict3', JSON.stringify(wordDict));
+                document.getElementById('word').value = '';
+                document.getElementById('meaning').value = '';
+                displayWords();
+            } else {
+                alert('単語と意味を入力してください');
+            }
+        }
+
+        function toggleDeleteMode() {
+            deleteMode = !deleteMode;
+            const checkboxes = document.querySelectorAll('input[name="deleteCheckbox"]');
+            const deleteButton = document.getElementById('deleteSelectedBtn');
+            const checkboxColumn = document.querySelectorAll('.delete-checkbox');
+
+            if (deleteMode) {
+                checkboxes.forEach(checkbox => checkbox.style.display = 'inline');
+                checkboxColumn.forEach(col => col.style.display = 'table-cell');
+                deleteButton.style.display = 'inline';
+            } else {
+                checkboxes.forEach(checkbox => checkbox.style.display = 'none');
+                checkboxColumn.forEach(col => col.style.display = 'none');
+                deleteButton.style.display = 'none';
+            }
+            displayWords();
+        }
+
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('input[name="deleteCheckbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                const word = checkbox.value;
+                delete wordDict[word];
+            });
+            localStorage.setItem('wordDict3', JSON.stringify(wordDict));
+            displayWords();
+            toggleDeleteMode(); // 削除後に削除モードを解除
+        }
+
+        function displayWords() {
+            const tableBody = document.getElementById('wordTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+            let index = 1;
+
+            for (const [word, meaning] of Object.entries(wordDict)) {
+                const row = tableBody.insertRow();
+
+                const indexCell = row.insertCell(0);
+                indexCell.textContent = index; // インデックスを設定
+                index++;
+
+                if (deleteMode) {
+                    const checkboxCell = row.insertCell(1);
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.name = 'deleteCheckbox';
+                    checkbox.value = word;
+                    checkboxCell.appendChild(checkbox);
+                    checkboxCell.classList.add('delete-checkbox');
+                    checkboxCell.style.display = 'table-cell'; 
+                } else {
+                    const emptyCell = row.insertCell(1);
+                    emptyCell.classList.add('delete-checkbox');
+                    emptyCell.style.display = 'none'; 
+                }
+
+                const wordCell = row.insertCell(2);
+                const meaningCell = row.insertCell(3);
+                wordCell.textContent = word;
+                meaningCell.textContent = meaning;
+            }
+        }
+
+        window.onload = displayWords;
+    </script>
+</body>
+</html>
+

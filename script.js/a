@@ -1,0 +1,78 @@
+const maxFiles = 3; //最大ファイル数
+let fileCounter = 1; // ファイル番号をカウント
+const fileList = document.getElementById('fileList');
+
+// ページ読み込み時に既存のファイルを表示
+window.onload = function() {
+    loadFiles();
+    if (fileCounter > maxFiles){
+        document.getElementById('addFileButton').disabled = true; //ファイル追加ボタンを無効
+    }
+}
+
+// ファイルを追加する関数
+function addFile() {
+    if (fileCounter <= maxFiles) {
+        const fileName = `ファイル${fileCounter}`;
+        
+        // 新しいファイルを表示する要素を作成
+        const fileElement = document.createElement('div');
+        fileElement.textContent = fileName;
+        fileElement.className = 'file-item';
+        
+        // クリックすると指定のページに遷移するように設定
+        fileElement.addEventListener('click', function() {
+            localStorage.setItem('selectedFile', fileName); // 選択したファイル名を保存
+            
+            // ファイルに応じて異なるページに遷移
+            if (fileName === 'ファイル1') {
+                window.location.href = 'index.html'; // ファイル1 → index.html
+            } else if (fileName === 'ファイル2') {
+                window.location.href = 'index2.html'; // ファイル2 → index2.html
+            } else if (fileName === 'ファイル3') {
+                window.location.href = 'index3.html'; // ファイル3 → index3.html
+            }
+        });
+
+        // ファイルリストに追加
+        fileList.appendChild(fileElement);
+        
+        // ファイル名をローカルストレージに保存
+        saveFile(fileName);
+
+        fileCounter++;
+
+        // 最大ファイル数に達したらボタンを無効化
+        if (fileCounter > maxFiles) {
+            document.getElementById('addFileButton').disabled = true;
+        }
+    }
+}
+
+
+// ファイル名をローカルストレージに保存する関数
+function saveFile(fileName) {
+    let files = JSON.parse(localStorage.getItem('files')) || [];
+    files.push(fileName);
+    localStorage.setItem('files', JSON.stringify(files));
+}
+
+// ページ読み込み時にファイルをロードする関数
+function loadFiles() {
+    let files = JSON.parse(localStorage.getItem('files')) || [];
+    files.forEach(fileName => {
+        const fileElement = document.createElement('div');
+        fileElement.textContent = fileName;
+        fileElement.className = 'file-item';
+        
+        fileElement.onclick = function() {
+            localStorage.setItem('selectedFile', fileName);
+            window.location.href = 'index.html';
+        };
+        
+        fileList.appendChild(fileElement);
+    });
+
+    // ロードされたファイル数に応じてfileCounterを更新
+    fileCounter = files.length + 1;
+}

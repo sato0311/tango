@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン画面</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <!-- ログイン画面 -->
+    <div id="login-section" style="display: block;">
+        <h1>ログイン</h1>
+        <input type="text" id="loginUserId" placeholder="ユーザーID" maxlength="10"><br>
+        <input type="password" id="loginPassword" placeholder="パスワード" maxlength="10"><br>
+        <button onclick="login()">ログイン</button>
+        <p>アカウントをお持ちでない方は <a href="#" onclick="showSignUp()">こちら</a> からアカウントを作成してください。</p>
+    </div>
+
+    <!-- アカウント作成画面 -->
+    <div id="signup-section" style="display: none;">
+        <h1>アカウント作成</h1>
+        <input type="text" id="newUserId" placeholder="ユーザーID" maxlength="10"><br>
+        <input type="password" id="newPassword" placeholder="パスワード" maxlength="10"><br>
+        <input type="password" id="confirmPassword" placeholder="パスワード再確認" maxlength="10"><br>
+        <button onclick="signUp()">アカウント作成</button>
+        <p>すでにアカウントをお持ちの方は <a href="#" onclick="showLogin()">こちら</a> からログインしてください。</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
